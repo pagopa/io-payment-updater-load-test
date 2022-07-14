@@ -28,7 +28,7 @@ import {
   export default function () {
     // Values from env var.
     var producerBaseUrl = `${__ENV.PRODUCER_BASE_URL}`;
-    var puBaseUrl = `${__ENV.PRODUCER_BASE_URL}`;
+    var puBaseUrl = `${__ENV.PU_BASE_URL}`;
   
     const messageArray = [];
     // first create a set of randomMessages to be processed
