@@ -38,9 +38,9 @@ parameters:
     displayName: 'Script name'
     type: string
     values:
-      - 01-producer_newpayment
-      - 02-payment_check
-      - 03-message_payments
+      - producer_newpayment
+      - payment_check
+      - message_payments
 
 steps:
   - script: |
