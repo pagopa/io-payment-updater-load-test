@@ -1,0 +1,60 @@
+# azure-pipelines.yml
+trigger: none
+
+pool:
+  name: io-prod-loadtest-linux
+
+parameters:
+  - name: 'DESCRIPTION'
+    type: string
+    default: 'Load test'
+  - name: 'rate'
+    displayName: 'rate'
+    type: string
+    default: '10'
+  - name: 'duration'
+    displayName: 'duration'
+    type: string
+    default: '1m'
+  - name: 'preAllocatedVUs'
+    displayName: 'preAllocatedVUs'
+    type: string
+    default: '10'
+  - name: 'maxVUs'
+    displayName: 'maxVUs'
+    type: string
+    default: '10'
+  - name: 'PRODUCER_BASE_URL'
+    displayName: 'PRODUCER_BASE_URL'
+    type: string
+    values:
+      - 'https://io-d-reminder-producer.azurewebsites.net'
+  - name: 'PU_BASE_URL'
+    displayName: 'PU_BASE_URL'
+    type: string
+    values:
+      - 'https://io-d-reminder-producer.azurewebsites.net'
+  - name: 'SCRIPT'
+    displayName: 'Script name'
+    type: string
+    values:
+      - producer_newpayment
+      - payment_check
+      - message_payments
+
+steps:
+  - script: |
+      docker pull loadimpact/k6
+    displayName: Pull k6 image
+  - script: |
+      docker run -i \
+        -v $(pwd)/src:/src \
+        -e PRODUCER_BASE_URL=${{ parameters.PRODUCER_BASE_URL }} \
+        -e PU_BASE_URL=${{ parameters.PU_BASE_URL }} \
+        -e rate=${{ parameters.rate }} \
+        -e duration=${{ parameters.duration }} \
+        -e preAllocatedVUs=${{ parameters.preAllocatedVUs }} \
+        -e maxVUs=${{ parameters.maxVUs }} \
+        loadimpact/k6 \
+        run /src/${{ parameters.SCRIPT }}.js \
+    displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.DESCRIPTION }}
