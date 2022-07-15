@@ -1,3 +1,5 @@
+import { check, sleep } from 'k6';
+import http from 'k6/http';
 import {
   generateMessage,
   generatePayment,
@@ -38,9 +40,7 @@ import {
   
     // publish messages
     let url = `${producerBaseUrl}/notifications/newKafka`;
-    let res = http.post(url, messageArray, params, {
-      tags: tag,
-    });
+    let res = http.post(url, JSON.stringify(messageArray), params);
     check(res, { "status was 200": (r) => r.status == 200 });
   
     sleep(1);
@@ -62,7 +62,10 @@ import {
     for (let i = 0; i <= 100; i++) {
       allPayments.push(generateRandomPayment().paymentBizEvent);
       if (i % 5 === 0) {
-        allPayments.push(paymentsRelatedToMessages.pop().paymentBizEvent);
+        const paymentRelatedToMessage = paymentsRelatedToMessages.pop();
+        if (paymentRelatedToMessage){
+          allPayments.push(paymentRelatedToMessage.paymentBizEvent);
+        }
       }
     }
   
