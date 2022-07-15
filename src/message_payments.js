@@ -80,7 +80,7 @@ import {
     sleep(2);
 
     // check Processed Payments
-    let checkPaymentApiUrl = `${puBaseUrl}/api/v1/payment/check`;
+    let checkPaymentApiUrl = `${puBaseUrl}/api/v1/payment/check/messages`;
     paymentMessages.forEach((paymentMessage) => {
       let res = http.get(
         `${checkPaymentApiUrl}/${paymentMessage.id}`, {
