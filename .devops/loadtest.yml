@@ -44,9 +44,6 @@ parameters:
       - 'round_robin'
       - 'beta'
       - 'weu-prod01'
-  - name: 'API_SUBSCRIPTION_KEY'
-    displayName: 'Apim Subscription Key'
-    type: string
   - name: 'SCRIPT'
     displayName: 'Script name'
     type: string
