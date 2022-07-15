@@ -83,7 +83,12 @@ import {
     let checkPaymentApiUrl = `${puBaseUrl}/api/v1/payment/check`;
     paymentMessages.forEach((paymentMessage) => {
       let res = http.get(
-        `${checkPaymentApiUrl}/${paymentMessage.id}`
+        `${checkPaymentApiUrl}/${paymentMessage.id}`, {
+          headers: {
+            "Ocp-Apim-Subscription-Key": `${__ENV.API_SUBSCRIPTION_KEY}`,
+            environment: `${__ENV.API_ENVIRONMENT}` ? `${__ENV.API_ENVIRONMENT}` : "default"
+          }
+        }
         );
       check(res, { "status was 200": (r) => r.status == 200 });
       sleep(1);

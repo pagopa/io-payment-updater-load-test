@@ -34,6 +34,16 @@ parameters:
     type: string
     values:
       - 'https://io-d-reminder-producer.azurewebsites.net'
+  - name: 'API_ENVIRONMENT'
+    displayName: 'API_ENVIRONMENT'
+    type: string
+    values:
+      - 'round_robin'
+      - 'beta'
+      - 'weu-prod01'
+  - name: 'API_SUBSCRIPTION_KEY'
+    displayName: 'Apim Subscription Key'
+    type: string
   - name: 'SCRIPT'
     displayName: 'Script name'
     type: string
@@ -51,6 +61,8 @@ steps:
         -v $(pwd)/src:/src \
         -e PRODUCER_BASE_URL=${{ parameters.PRODUCER_BASE_URL }} \
         -e PU_BASE_URL=${{ parameters.PU_BASE_URL }} \
+        -e API_ENVIRONMENT=${{ API_ENVIRONMENT }} \
+        -e API_SUBSCRIPTION_KEY=${{ API_SUBSCRIPTION_KEY }} \
         -e rate=${{ parameters.rate }} \
         -e duration=${{ parameters.duration }} \
         -e preAllocatedVUs=${{ parameters.preAllocatedVUs }} \

@@ -33,5 +33,5 @@ $ docker run -i --rm -v $(pwd)/src:/src  -e PU_BASE_URL=${PU_BASE_URL} -e rate=$
 This test represents payment messages lifecycle through Payment Updater.
 
 ```
-$ docker run -i --rm -v $(pwd)/src:/src -e PRODUCER_BASE_URL=${PRODUCER_BASE_URL} -e PU_BASE_URL=${PU_BASE_URL} -e rate=${rate} -e duration=${duration} -e preAllocatedVUs=${preAllocatedVUs} -e maxVUs=${maxVUs} loadimpact/k6 run /src/message_payments.js
+$ docker run -i --rm -v $(pwd)/src:/src -e PRODUCER_BASE_URL=${PRODUCER_BASE_URL} -e PU_BASE_URL=${PU_BASE_URL} -e API_ENVIRONMENT=${API_ENVIRONMENT} -e -e API_SUBSCRIPTION_KEY=${API_SUBSCRIPTION_KEY} -e rate=${rate} -e duration=${duration} -e preAllocatedVUs=${preAllocatedVUs} -e maxVUs=${maxVUs} loadimpact/k6 run /src/message_payments.js
 ```
