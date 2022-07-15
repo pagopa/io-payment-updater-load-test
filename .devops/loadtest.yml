@@ -33,7 +33,10 @@ parameters:
     displayName: 'PU_BASE_URL'
     type: string
     values:
-      - 'https://io-d-reminder-producer.azurewebsites.net'
+      - 'https://api-app.internal.io.pagopa.it'
+  - name: 'API_SUBSCRIPTION_KEY'
+    displayName: 'API_SUBSCRIPTION_KEY'
+    type: string
   - name: 'API_ENVIRONMENT'
     displayName: 'API_ENVIRONMENT'
     type: string
@@ -61,8 +64,8 @@ steps:
         -v $(pwd)/src:/src \
         -e PRODUCER_BASE_URL=${{ parameters.PRODUCER_BASE_URL }} \
         -e PU_BASE_URL=${{ parameters.PU_BASE_URL }} \
-        -e API_ENVIRONMENT=${{ API_ENVIRONMENT }} \
-        -e API_SUBSCRIPTION_KEY=${{ API_SUBSCRIPTION_KEY }} \
+        -e API_ENVIRONMENT=${{ parameters.API_ENVIRONMENT }} \
+        -e API_SUBSCRIPTION_KEY=${{ parameters.API_SUBSCRIPTION_KEY }} \
         -e rate=${{ parameters.rate }} \
         -e duration=${{ parameters.duration }} \
         -e preAllocatedVUs=${{ parameters.preAllocatedVUs }} \
