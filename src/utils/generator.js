@@ -122,7 +122,7 @@ export const randomString = (length, charset) => {
         content_paymentData_invalidAfterDueDate: false,
         content_paymentData_payeeFiscalCode: generatePayeeFiscalCode(),
         content_paymentData_dueDate: "2999-06-10",
-        fiscal_code: generateFakeFiscalCode(),
+        fiscal_code: generateFakeFiscalCode("9"),
       };
     } else {
       return {
@@ -134,14 +134,14 @@ export const randomString = (length, charset) => {
         isPending: false,
         content_subject: "subject",
         content_type: contentType,
-        fiscal_code: generateFakeFiscalCode(),
+        fiscal_code: generateFakeFiscalCode("9"),
       };
     }
   };
   
   export const generateRandomPayment = () => {
     const payeeFiscalCode = generatePayeeFiscalCode();
-    const debtorFiscalCode = generateFakeFiscalCode();
+    const debtorFiscalCode = generateFakeFiscalCode("9");
     const noticeNumber = generateNoticeNumber();
     return {
       paymentBizEvent: getPaymentBizEvent(
