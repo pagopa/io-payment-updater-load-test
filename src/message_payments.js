@@ -2,7 +2,7 @@ import {
   generateMessage,
   generatePayment,
   generateRandomPayment
-} from "./utils/generator";
+} from "./utils/generator.js";
   
   export let options = {
     scenarios: {

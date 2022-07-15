@@ -106,29 +106,37 @@ export const randomString = (length, charset) => {
   };
   export const generateMessage = () => {
     const contentType = generateContentType();
-    let paymentData = {};
-    if (contentType === "PAYMENT") {
-      paymentData = {
+  
+    if (contentType === "PAYMENT"){
+      return {
+        id: generateMessageId(),
+        operation: "CREATE",
+        senderServiceId: "Reminder",
+        senderUserId: "Reminder",
+        timeToLiveSeconds: 100,
+        isPending: false,
+        content_subject: "subject",
+        content_type: contentType,
         content_paymentData_amount: 500.84,
         content_paymentData_noticeNumber: generateNoticeNumber(),
         content_paymentData_invalidAfterDueDate: false,
         content_paymentData_payeeFiscalCode: generatePayeeFiscalCode(),
         content_paymentData_dueDate: "2999-06-10",
+        fiscal_code: generateFakeFiscalCode(),
+      };
+    } else {
+      return {
+        id: generateMessageId(),
+        operation: "CREATE",
+        senderServiceId: "Reminder",
+        senderUserId: "Reminder",
+        timeToLiveSeconds: 100,
+        isPending: false,
+        content_subject: "subject",
+        content_type: contentType,
+        fiscal_code: generateFakeFiscalCode(),
       };
     }
-  
-    return {
-      ...paymentData,
-      id: generateMessageId(),
-      operation: "CREATE",
-      senderServiceId: "Reminder",
-      senderUserId: "Reminder",
-      timeToLiveSeconds: 100,
-      isPending: false,
-      content_subject: "subject",
-      content_type: generateContentType(),
-      fiscal_code: generateFakeFiscalCode(),
-    };
   };
   
   export const generateRandomPayment = () => {
