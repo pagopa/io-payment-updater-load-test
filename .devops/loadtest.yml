@@ -70,7 +70,7 @@ steps:
         -e duration=${{ parameters.duration }} \
         -e preAllocatedVUs=${{ parameters.preAllocatedVUs }} \
         -e maxVUs=${{ parameters.maxVUs }} \
-        -e maxVUs=${{ parameters.clientSecret }} \
+        -e clientSecret=${{ parameters.clientSecret }} \
         loadimpact/k6 \
         run /src/${{ parameters.SCRIPT }}.js \
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.DESCRIPTION }}
