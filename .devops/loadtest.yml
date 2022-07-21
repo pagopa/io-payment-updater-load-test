@@ -24,6 +24,9 @@ parameters:
     displayName: 'maxVUs'
     type: string
     default: '10'
+  - name: 'clientSecret'
+    displayName: 'clientSecret'
+    type: string
   - name: 'PRODUCER_BASE_URL'
     displayName: 'PRODUCER_BASE_URL'
     type: string
@@ -67,6 +70,7 @@ steps:
         -e duration=${{ parameters.duration }} \
         -e preAllocatedVUs=${{ parameters.preAllocatedVUs }} \
         -e maxVUs=${{ parameters.maxVUs }} \
+        -e maxVUs=${{ parameters.clientSecret }} \
         loadimpact/k6 \
         run /src/${{ parameters.SCRIPT }}.js \
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.DESCRIPTION }}

@@ -15,6 +15,28 @@ export let options = {
         http_req_duration: ['p(99)<1500'], // 99% of requests must complete below 1.5s
         'http_req_duration{Method:newPaymentKafka}': ['p(95)<1000'], // threshold on API requests only
     },
+	ext: {
+		loadimpact: {
+		  apm: [
+			{
+			  provider: 'azuremonitor',
+			  tenantId: '7788edaf-0346-4068-9d79-c868aed15b3d',
+			  clientId: '8768beb6-ce9e-4fcd-a0db-3c325a3a5417',
+			  clientSecret: __ENV.clientSecret,
+			  subscriptionId: 'a4e96bcd-59dc-4d66-b2f7-5547ad157c12',
+			  resourceGroupName: 'io-d-reminder-ext',
+			  insightsAppName: 'io-d-reminder-ai',
+			  // optional
+			  azureRegion: 'westeurope',
+	
+			  // optional
+			  metrics: ['http_req_sending', 'my_rate', 'my_gauge'], // ...
+			  includeDefaultMetrics: true,
+			  includeTestRunId: false,
+			},
+		  ],
+		},
+	},
 };
 
 const payload = JSON.stringify({
