@@ -10,6 +10,11 @@ To invoke k6 load test passing parameter use -e (or --env) flag:
 -e MY_VARIABLE=MY_VALUE
 ```
 
+Let's keep in mind that before perform a load test you have to:
+
+- run `yarn install`
+- run `yarn webpack`
+
 ## 01. New Payment Producer
 
 This test produce a Payment
