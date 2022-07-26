@@ -17,7 +17,6 @@ export type IConfig = t.TypeOf<typeof IConfig>;
 export const IConfig = t.intersection([
   t.interface({
     API_SUBSCRIPTION_KEY: NonEmptyString,
-    APPINSIGHTS_INSTRUMENTATIONKEY: NonEmptyString,
     PRODUCER_BASE_URL: NonEmptyString,
     PU_BASE_URL: NonEmptyString,
   }),
