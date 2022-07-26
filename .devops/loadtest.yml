@@ -5,47 +5,47 @@ pool:
   name: io-prod-loadtest-linux
 
 parameters:
-  - name: 'DESCRIPTION'
+  - name: "DESCRIPTION"
     type: string
-    default: 'Load test'
-  - name: 'rate'
-    displayName: 'rate'
+    default: "Load test"
+  - name: "rate"
+    displayName: "rate"
     type: string
-    default: '10'
-  - name: 'duration'
-    displayName: 'duration'
+    default: "10"
+  - name: "duration"
+    displayName: "duration"
     type: string
-    default: '1m'
-  - name: 'preAllocatedVUs'
-    displayName: 'preAllocatedVUs'
+    default: "1m"
+  - name: "preAllocatedVUs"
+    displayName: "preAllocatedVUs"
     type: string
-    default: '10'
-  - name: 'maxVUs'
-    displayName: 'maxVUs'
+    default: "10"
+  - name: "maxVUs"
+    displayName: "maxVUs"
     type: string
-    default: '10'
-  - name: 'PRODUCER_BASE_URL'
-    displayName: 'PRODUCER_BASE_URL'
-    type: string
-    values:
-      - 'https://io-d-reminder-producer.azurewebsites.net'
-  - name: 'PU_BASE_URL'
-    displayName: 'PU_BASE_URL'
+    default: "10"
+  - name: "PRODUCER_BASE_URL"
+    displayName: "PRODUCER_BASE_URL"
     type: string
     values:
-      - 'https://api-app.internal.io.pagopa.it'
-  - name: 'API_SUBSCRIPTION_KEY'
-    displayName: 'API_SUBSCRIPTION_KEY'
-    type: string
-  - name: 'API_ENVIRONMENT'
-    displayName: 'API_ENVIRONMENT'
+      - "https://io-d-reminder-producer.azurewebsites.net"
+  - name: "PU_BASE_URL"
+    displayName: "PU_BASE_URL"
     type: string
     values:
-      - 'round_robin'
-      - 'beta'
-      - 'weu-prod01'
-  - name: 'SCRIPT'
-    displayName: 'Script name'
+      - "https://api-app.internal.io.pagopa.it"
+  - name: "API_SUBSCRIPTION_KEY"
+    displayName: "API_SUBSCRIPTION_KEY"
+    type: string
+  - name: "API_ENVIRONMENT"
+    displayName: "API_ENVIRONMENT"
+    type: string
+    values:
+      - "round_robin"
+      - "beta"
+      - "weu-prod01"
+  - name: "SCRIPT"
+    displayName: "Script name"
     type: string
     values:
       - producer_newpayment
@@ -54,11 +54,17 @@ parameters:
 
 steps:
   - script: |
+      apt get install yarn
+    displayName: Install yarn
+  - script: |
+      yarn install && yarn webpack
+    displayName: Install and Run webpack
+  - script: |
       docker pull loadimpact/k6
     displayName: Pull k6 image
   - script: |
       docker run -i \
-        -v $(pwd)/src:/src \
+        -v $(pwd)/dist:/dist \
         -e PRODUCER_BASE_URL=${{ parameters.PRODUCER_BASE_URL }} \
         -e PU_BASE_URL=${{ parameters.PU_BASE_URL }} \
         -e API_ENVIRONMENT=${{ parameters.API_ENVIRONMENT }} \
@@ -68,5 +74,5 @@ steps:
         -e preAllocatedVUs=${{ parameters.preAllocatedVUs }} \
         -e maxVUs=${{ parameters.maxVUs }} \
         loadimpact/k6 \
-        run /src/${{ parameters.SCRIPT }}.js \
+        run /dist/${{ parameters.SCRIPT }}.js \
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.DESCRIPTION }}
