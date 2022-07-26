@@ -51,6 +51,10 @@ parameters:
       - producer_newpayment
       - payment_check
       - message_payments
+  # optional sub path where the project to be initialized is located. To be used on repository with multiple projects.
+  - name: "projectDir"
+    type: string
+    default: "." # current folder is default
   # if not set, the Node version will be red from .node-version and -nvmrc files, in this order
   - name: "nodeVersion"
     type: string
