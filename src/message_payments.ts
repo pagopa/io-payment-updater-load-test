@@ -48,7 +48,7 @@ export default function() {
   let url = `${producerBaseUrl}/notifications/newKafka`;
   let res = http.post(url, JSON.stringify(messageArray), params);
   check(res, { "status was 200": (r) => r.status == 200 });
-  sleep(1);
+  sleep(60);
 
   const paymentMessages = messageArray.filter(PaymentMessage.is);
 
@@ -62,13 +62,15 @@ export default function() {
   );
 
   const allPayments = [];
+  let j = 0;
   for (let i = 0; i <= 100; i++) {
     allPayments.push(generateRandomPayment().paymentBizEvent);
-    if (i % 5 === 0) {
-      const paymentRelatedToMessage = paymentsRelatedToMessages.pop();
+    if (i % 5 === 0 && j < paymentsRelatedToMessages.length) {
+      const paymentRelatedToMessage = paymentsRelatedToMessages[j];
       if (paymentRelatedToMessage) {
         allPayments.push(paymentRelatedToMessage.paymentBizEvent);
       }
+      j++;
     }
   }
 

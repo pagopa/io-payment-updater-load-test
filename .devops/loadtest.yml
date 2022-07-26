@@ -54,7 +54,13 @@ parameters:
 
 steps:
   - script: |
-      sudo apt-get install yarn
+      curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    displayName: Add sources
+  - script: |
+      echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    displayName: Add Debian Repository
+  - script: |
+      sudo apt-get update && sudo apt-get install yarn
     displayName: Install yarn
   - script: |
       yarn install && yarn webpack
