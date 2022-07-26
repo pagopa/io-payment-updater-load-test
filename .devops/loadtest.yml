@@ -60,7 +60,7 @@ steps:
       echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     displayName: Add Debian Repository
   - script: |
-      sudo apt-get update && sudo apt-get install yarn
+      sudo apt-get update && sudo apt-get install yarn -y
     displayName: Install yarn
   - script: |
       yarn install && yarn webpack
