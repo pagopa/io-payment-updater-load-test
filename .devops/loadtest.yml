@@ -51,17 +51,37 @@ parameters:
       - producer_newpayment
       - payment_check
       - message_payments
+  # if not set, the Node version will be red from .node-version and -nvmrc files, in this order
+  - name: "nodeVersion"
+    type: string
+    default: "none"
 
 steps:
-  - script: |
-      curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-    displayName: Add sources
-  - script: |
-      echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    displayName: Add Debian Repository
-  - script: |
-      sudo apt-get update && sudo apt-get install yarn -y
-    displayName: Install yarn
+  # If a Node version is defined explicitly by parameter, such version is used
+  # Else, version is red from .node-version file
+  # Else, version is red from .nvmrc file
+  - ${{ if ne(parameters.nodeVersion, 'none') }}:
+      - bash: |
+          echo "current folder: $(pwd)"
+          FROM_PARAM=${{ parameters.nodeVersion }}
+          echo "set FROM_PARAM='$FROM_PARAM'"
+          echo "##vso[task.setvariable variable=NODE_VERSION]$FROM_PARAM"
+        workingDirectory: ${{ parameters.projectDir }}
+        displayName: "Determine Node.js version from template param"
+  - ${{ if eq(parameters.nodeVersion, 'none') }}:
+      - bash: |
+          echo "current folder: $(pwd)"
+          FROM_SOURCE=$(cat .node-version || cat .nvmrc)
+          ls .node-version && echo ".node-version found, value: '$(cat .node-version)'" || echo ".node-version not found" 
+          ls .nvmrc && echo ".nvmrc found, value: '$(cat .nvmrc)'" || echo ".nvmrc not found" 
+          echo "set FROM_SOURCE='$FROM_SOURCE'"
+          echo "##vso[task.setvariable variable=NODE_VERSION]$FROM_SOURCE"
+        workingDirectory: ${{ parameters.projectDir }}
+        displayName: "Determine Node.js version from source"
+  - task: UseNode@1
+    inputs:
+      version: $(NODE_VERSION)
+    displayName: "Set up Node.js"
   - script: |
       yarn install && yarn webpack
     displayName: Install and Run webpack
