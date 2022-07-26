@@ -54,7 +54,7 @@ parameters:
 
 steps:
   - script: |
-      apt get install yarn
+      apt-get install yarn
     displayName: Install yarn
   - script: |
       yarn install && yarn webpack
