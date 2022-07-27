@@ -87,6 +87,9 @@ steps:
       version: $(NODE_VERSION)
     displayName: "Set up Node.js"
   - script: |
+      npm install --global yarn
+    displayName: Install Yarn
+  - script: |
       yarn install && yarn webpack
     displayName: Install and Run webpack
   - script: |
