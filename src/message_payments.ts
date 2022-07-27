@@ -1,6 +1,8 @@
-import { check, sleep } from "k6";
+import { check, fail, sleep } from "k6";
 import http from "k6/http";
 import * as O from "fp-ts/lib/Option";
+import * as E from "fp-ts/lib/Either";
+import * as B from "fp-ts/lib/boolean";
 import { getConfigOrThrow } from "./utils/config";
 import {
   generateMessage,
@@ -9,6 +11,7 @@ import {
   PaymentMessage,
 } from "./utils/generator";
 import { pipe } from "fp-ts/lib/function";
+import { ApiPaymentMessageResponse } from "./utils/types";
 
 const config = getConfigOrThrow();
 
@@ -24,6 +27,7 @@ export let options = {
   },
   thresholds: {
     http_req_duration: ["p(99)<1500"], // 99% of requests must complete below 1.5s
+    "http_req_duration{api:checkMessages}": ["p(95)<1000"],
   },
 };
 
@@ -46,8 +50,15 @@ export default function() {
 
   // publish messages
   let url = `${producerBaseUrl}/notifications/newKafka`;
-  let res = http.post(url, JSON.stringify(messageArray), params);
-  check(res, { "status was 200": (r) => r.status == 200 });
+  let res = http.post(url, JSON.stringify(messageArray), {
+    ...params,
+    tags: { api: "newKafka" },
+  });
+  check(
+    res,
+    { "newKafka status was 200": (r) => r.status == 200 },
+    { tags: { api: "newKafka" } }
+  );
   sleep(60);
 
   const paymentMessages = messageArray.filter(PaymentMessage.is);
@@ -61,25 +72,28 @@ export default function() {
     )
   );
 
-  const allPayments = [];
-  let j = 0;
+  const allPayments = [
+    ...paymentsRelatedToMessages.map((m) => m.paymentBizEvent),
+  ];
   for (let i = 0; i <= 100; i++) {
     allPayments.push(generateRandomPayment().paymentBizEvent);
-    if (i % 5 === 0 && j < paymentsRelatedToMessages.length) {
-      const paymentRelatedToMessage = paymentsRelatedToMessages[j];
-      if (paymentRelatedToMessage) {
-        allPayments.push(paymentRelatedToMessage.paymentBizEvent);
-      }
-      j++;
-    }
   }
 
+  const allPaymentsShuffled = allPayments.sort(() => Math.random() - 0.5);
+
   let createPaymentUrl = `${producerBaseUrl}/notifications/newPaymentKafka`;
-  allPayments.forEach((paymentBizEvent) => {
+  allPaymentsShuffled.forEach((paymentBizEvent) => {
     const payload = JSON.stringify(paymentBizEvent);
-    let res = http.post(createPaymentUrl, payload, params);
-    check(res, { "status was 200": (r) => r.status == 200 });
-    sleep(1);
+    let res = http.post(createPaymentUrl, payload, {
+      ...params,
+      tags: { api: "newPaymentKafka" },
+    });
+    check(
+      res,
+      { "newPaymentKafka status was 200": (r) => r.status == 200 },
+      { tags: { api: "newPaymentKafka" } }
+    );
+    sleep(0.5);
   });
 
   sleep(2);
@@ -87,17 +101,56 @@ export default function() {
   // check Processed Payments
   let checkPaymentApiUrl = `${puBaseUrl}/api/v1/payment/check/messages`;
   paymentMessages.forEach((paymentMessage) => {
-    let res = http.get(`${checkPaymentApiUrl}/${paymentMessage.id}`, {
-      headers: {
-        "Ocp-Apim-Subscription-Key": `${config.API_SUBSCRIPTION_KEY}`,
-        environment: pipe(
-          config.API_ENVIRONMENT,
-          O.fromNullable,
-          O.getOrElse(() => "default")
-        ),
-      },
-    });
-    check(res, { "status was 200": (r) => r.status == 200 });
+    pipe(
+      http.get(`${checkPaymentApiUrl}/${paymentMessage.id}`, {
+        headers: {
+          "Ocp-Apim-Subscription-Key": `${config.API_SUBSCRIPTION_KEY}`,
+          environment: pipe(
+            config.API_ENVIRONMENT,
+            O.fromNullable,
+            O.getOrElse(() => "default")
+          ),
+        },
+        tags: { api: "checkMessages" },
+      }),
+      (res) =>
+        pipe(
+          check(
+            res,
+            { "checkMessages status was 200": (r) => r.status == 200 },
+            { tags: { api: "checkMessages" } }
+          ),
+          () => res.status == 200,
+          B.fold(
+            () => void 0,
+            () =>
+              pipe(
+                res.json(),
+                ApiPaymentMessageResponse.decode,
+                E.map((paymentResponse) =>
+                  check(
+                    paymentResponse,
+                    {
+                      "payment response paid flag is true": (pR) => pR.paid,
+                    },
+                    { tags: { method: "checkPaidFlag" } }
+                  )
+                ),
+                E.getOrElse((errs) =>
+                  check(
+                    errs,
+                    {
+                      "payment response has a correct response shape": (errs) =>
+                        errs == undefined,
+                    },
+                    { tags: { method: "checkPaymentResponseShape" } }
+                  )
+                )
+              )
+          )
+        )
+    );
+
     sleep(1);
   });
 }
