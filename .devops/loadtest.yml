@@ -34,6 +34,15 @@ parameters:
     type: string
     values:
       - "https://api-app.internal.io.pagopa.it"
+  - name: "TEST_LOGIN_FISCAL_CODES"
+    displayName: "TEST_LOGIN_FISCAL_CODES"
+    type: string
+  - name: "APIM_PUBLIC_URL"
+    displayName: "APIM_PUBLIC_URL"
+    type: string
+  - name: "SERVICE_SUBSCRIPTION_KEY"
+    displayName: "SERVICE_SUBSCRIPTION_KEY"
+    type: string
   - name: "API_SUBSCRIPTION_KEY"
     displayName: "API_SUBSCRIPTION_KEY"
     type: string

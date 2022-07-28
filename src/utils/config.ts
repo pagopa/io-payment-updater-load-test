@@ -1,7 +1,8 @@
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { IntegerFromString } from "@pagopa/ts-commons/lib/numbers";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import * as E from "fp-ts/lib/Either";
+import * as RA from "fp-ts/lib/ReadonlyArray";
 import * as t from "io-ts";
 import { pipe } from "fp-ts/lib/function";
 
@@ -19,9 +20,13 @@ export const IConfig = t.intersection([
     API_SUBSCRIPTION_KEY: NonEmptyString,
     PRODUCER_BASE_URL: NonEmptyString,
     PU_BASE_URL: NonEmptyString,
+    APIM_PUBLIC_URL: NonEmptyString,
   }),
   t.partial({
     API_ENVIRONMENT: NonEmptyString,
+    APP_BACKEND_BASE_URL: NonEmptyString,
+    TEST_LOGIN_FISCAL_CODES: t.readonlyArray(FiscalCode),
+    SERVICE_SUBSCRIPTION_KEY: NonEmptyString,
   }),
   K6Config,
 ]);
@@ -29,6 +34,13 @@ export const IConfig = t.intersection([
 // No need to re-evaluate this object for each call
 const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
   ...__ENV,
+  TEST_LOGIN_FISCAL_CODES: pipe(
+    __ENV.TEST_LOGIN_FISCAL_CODES,
+    NonEmptyString.decode,
+    E.map((_) => _.split(",")),
+    E.map((_) => RA.rights(_.map(FiscalCode.decode))),
+    E.getOrElseW(() => RA.empty)
+  ),
 });
 
 /**

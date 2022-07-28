@@ -38,7 +38,7 @@ export const generateFakeFiscalCode = (decade: string): FiscalCode => {
   ) as FiscalCode;
 };
 
-export const generateMessageId = () =>
+export const generateAvroMessageId = () =>
   randomString(12, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
 
 const getPaymentBizEvent = (
@@ -109,7 +109,7 @@ const getPaymentBizEvent = (
   ],
 });
 
-const generatePayeeFiscalCode = () => {
+export const generatePayeeFiscalCode = () => {
   return randomString(11, "0123456789") as OrganizationFiscalCode;
 };
 
@@ -130,12 +130,13 @@ const generateContentType = () => {
       return "GENERIC";
   }
 };
-export const generateMessage = () => {
+
+export const generateAvroMessage = () => {
   const contentType = generateContentType();
 
   if (contentType === "PAYMENT") {
     return {
-      id: generateMessageId(),
+      id: generateAvroMessageId(),
       operation: "CREATE",
       senderServiceId: "Reminder",
       senderUserId: "Reminder",
@@ -152,7 +153,7 @@ export const generateMessage = () => {
     };
   } else {
     return {
-      id: generateMessageId(),
+      id: generateAvroMessageId(),
       operation: "CREATE",
       senderServiceId: "Reminder",
       senderUserId: "Reminder",
@@ -164,6 +165,24 @@ export const generateMessage = () => {
     };
   }
 };
+
+export const testFiscalCodeGenerator = (
+  testFiscalCodes: ReadonlyArray<FiscalCode>
+) => () => testFiscalCodes[Math.floor(Math.random() * testFiscalCodes.length)];
+
+export const generatePaymentMessage = (
+  fiscalCodeGenerator: () => FiscalCode
+) => ({
+  content: {
+    markdown: "A Payment updater markdown".repeat(5),
+    subject: "A Payment updater subject",
+    payment_data: {
+      notice_number: generateNoticeNumber(),
+      amount: 10,
+    },
+  },
+  fiscal_code: fiscalCodeGenerator(),
+});
 
 export const generateRandomPayment = () => {
   const payeeFiscalCode = generatePayeeFiscalCode();
