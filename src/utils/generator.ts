@@ -179,6 +179,9 @@ export const generatePaymentMessage = (
     payment_data: {
       notice_number: generateNoticeNumber(),
       amount: 10,
+      payee: {
+        fiscal_code: generatePayeeFiscalCode(),
+      },
     },
   },
   fiscal_code: fiscalCodeGenerator(),

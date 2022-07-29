@@ -5,7 +5,6 @@ import * as E from "fp-ts/lib/Either";
 import * as B from "fp-ts/lib/boolean";
 import { getConfigOrThrow } from "./utils/config";
 import {
-  generatePayeeFiscalCode,
   generatePayment,
   generatePaymentMessage,
   testFiscalCodeGenerator,
@@ -38,7 +37,6 @@ const commonHeaders = {
 export default function() {
   // Values from env var.
   var producerBaseUrl = `${config.PRODUCER_BASE_URL}`;
-  var appBackendBaseUrl = `${config.APP_BACKEND_BASE_URL}`;
   var apimPublicUrl = `${config.APIM_PUBLIC_URL}`;
   var serviceSubscriptionKey = pipe(
     config.SERVICE_SUBSCRIPTION_KEY,
@@ -53,7 +51,7 @@ export default function() {
     O.fromNullable,
     O.map(testFiscalCodeGenerator),
     O.map(generatePaymentMessage),
-    O.getOrElseW(() => fail("Cannot generate Test Fiscal Codes data"))
+    O.getOrElseW(() => fail("Cannot generate data with Test Fiscal Codes"))
   );
 
   // send message
@@ -89,7 +87,7 @@ export default function() {
 
   // Generate and publish related payment for payment message
   const paymentRelatedToMessage = generatePayment(
-    generatePayeeFiscalCode(),
+    aGeneratedPaymentMessageToSend.content.payment_data.payee.fiscal_code,
     aGeneratedPaymentMessageToSend.content.payment_data.notice_number,
     aGeneratedPaymentMessageToSend.fiscal_code
   );
@@ -109,13 +107,11 @@ export default function() {
 
   sleep(10);
 
-  // Login with test fiscal Code
-
-  // check Processed Payments
-  let checkMessageApiUrl = `${apimPublicUrl}/api/v1/messages`;
+  // Get Processed Payment Message
+  let getMessageApiUrl = `${apimPublicUrl}/api/v1/messages`;
   pipe(
     http.get(
-      `${checkMessageApiUrl}/${aGeneratedPaymentMessageToSend.fiscal_code}/${messageId}`,
+      `${getMessageApiUrl}/${aGeneratedPaymentMessageToSend.fiscal_code}/${messageId}`,
       {
         headers: {
           ...commonHeaders,
@@ -164,4 +160,6 @@ export default function() {
         )
       )
   );
+
+  console.log("Processed MessageId=", messageId);
 }
