@@ -11,6 +11,7 @@
       "build": "tsc",
       "watch": "tsc -w",
       "dev:message-payments": "shx rm -rf dist && webpack && docker run --env-file .env -i --rm -v $(pwd)/dist:/dist loadimpact/k6 run /dist/message_payments.js",
+      "dev:e2e-message-payments": "shx rm -rf dist && webpack && docker run --env-file .env -i --rm -v $(pwd)/dist:/dist loadimpact/k6 run /dist/message_payments_e2e.js",
       "start": "shx rm -rf dist && webpack && docker run -e PRODUCER_BASE_URL=${PRODUCER_BASE_URL} -e PU_BASE_URL=${PU_BASE_URL} -e API_ENVIRONMENT=${API_ENVIRONMENT} -e -e API_SUBSCRIPTION_KEY=${API_SUBSCRIPTION_KEY} -e rate=${rate} -e duration=${duration} -e preAllocatedVUs=${preAllocatedVUs} -e maxVUs=${maxVUs} loadimpact/k6 run /dist/message_payments.js",
       "predev": "npm-run-all build",
       "dev": "npm-run-all --parallel start watch",

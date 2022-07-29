@@ -9,3 +9,17 @@ export const ApiPaymentMessageResponse = t.interface({
 export type ApiPaymentMessageResponse = t.TypeOf<
   typeof ApiPaymentMessageResponse
 >;
+
+export const ApiSendMessageResponse = t.interface({
+  id: NonEmptyString,
+});
+
+export type ApiSendMessageResponse = t.TypeOf<typeof ApiSendMessageResponse>;
+
+export const ApiGetMessageResponse = t.interface({
+  status: NonEmptyString,
+  read_status: NonEmptyString,
+  payment_status: NonEmptyString,
+});
+
+export type ApiGetMessageResponse = t.TypeOf<typeof ApiSendMessageResponse>;

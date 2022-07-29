@@ -38,5 +38,13 @@ $ docker run -i --rm -v $(pwd)/dist:/dist  -e PU_BASE_URL=${PU_BASE_URL} -e rate
 This test represents payment messages lifecycle through Payment Updater.
 
 ```
-$ docker run -i --rm -v $(pwd)/dist:/dist -e PRODUCER_BASE_URL=${PRODUCER_BASE_URL} -e PU_BASE_URL=${PU_BASE_URL} -e API_ENVIRONMENT=${API_ENVIRONMENT} -e -e API_SUBSCRIPTION_KEY=${API_SUBSCRIPTION_KEY} -e rate=${rate} -e duration=${duration} -e preAllocatedVUs=${preAllocatedVUs} -e maxVUs=${maxVUs} loadimpact/k6 run /dist/message_payments.js
+$ docker run -i --rm -v $(pwd)/dist:/dist -e PRODUCER_BASE_URL=${PRODUCER_BASE_URL} -e PU_BASE_URL=${PU_BASE_URL} -e API_ENVIRONMENT=${API_ENVIRONMENT} -e API_SUBSCRIPTION_KEY=${API_SUBSCRIPTION_KEY} -e rate=${rate} -e duration=${duration} -e preAllocatedVUs=${preAllocatedVUs} -e maxVUs=${maxVUs} loadimpact/k6 run /dist/message_payments.js
+```
+
+## 02. Payment with Related Message E2E
+
+This test represents an E2E for payment messages lifecycle through Payment Updater.
+
+```
+$ docker run -i --rm -v $(pwd)/dist:/dist -e PRODUCER_BASE_URL=${PRODUCER_BASE_URL} -e TEST_LOGIN_FISCAL_CODES=${TEST_LOGIN_FISCAL_CODES} -e APIM_PUBLIC_URL=${APIM_PUBLIC_URL} -e SERVICE_SUBSCRIPTION_KEY=${SERVICE_SUBSCRIPTION_KEY} -e rate=${rate} -e duration=${duration} -e preAllocatedVUs=${preAllocatedVUs} -e maxVUs=${maxVUs} loadimpact/k6 run /dist/message_payments_e2e.js
 ```
