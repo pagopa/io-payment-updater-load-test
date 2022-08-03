@@ -137,7 +137,6 @@ export const generateAvroMessage = () => {
   if (contentType === "PAYMENT") {
     return {
       id: generateAvroMessageId(),
-      operation: "CREATE",
       senderServiceId: "Reminder",
       senderUserId: "Reminder",
       timeToLiveSeconds: 100,
@@ -154,7 +153,6 @@ export const generateAvroMessage = () => {
   } else {
     return {
       id: generateAvroMessageId(),
-      operation: "CREATE",
       senderServiceId: "Reminder",
       senderUserId: "Reminder",
       timeToLiveSeconds: 100,
