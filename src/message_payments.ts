@@ -5,7 +5,7 @@ import * as E from "fp-ts/lib/Either";
 import * as B from "fp-ts/lib/boolean";
 import { getConfigOrThrow } from "./utils/config";
 import {
-  generateMessage,
+  generateAvroMessage,
   generatePayment,
   generateRandomPayment,
   PaymentMessage,
@@ -45,7 +45,7 @@ export default function() {
   const messageArray = [];
   // first create a set of randomMessages to be processed
   for (let i = 0; i <= 100; i++) {
-    messageArray.push(generateMessage());
+    messageArray.push(generateAvroMessage());
   }
 
   // publish messages
@@ -68,7 +68,7 @@ export default function() {
     generatePayment(
       paymentMessage.content_paymentData_payeeFiscalCode,
       paymentMessage.content_paymentData_noticeNumber,
-      paymentMessage.fiscal_code
+      paymentMessage.fiscalCode
     )
   );
 

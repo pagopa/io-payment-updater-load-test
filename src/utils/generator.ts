@@ -19,7 +19,7 @@ export const PaymentMessage = t.interface({
   content_paymentData_invalidAfterDueDate: t.boolean,
   content_paymentData_payeeFiscalCode: OrganizationFiscalCode,
   content_paymentData_dueDate: t.string,
-  fiscal_code: FiscalCode,
+  fiscalCode: FiscalCode,
 });
 
 export type PaymentMessage = t.TypeOf<typeof PaymentMessage>;
@@ -38,7 +38,7 @@ export const generateFakeFiscalCode = (decade: string): FiscalCode => {
   ) as FiscalCode;
 };
 
-export const generateMessageId = () =>
+export const generateAvroMessageId = () =>
   randomString(12, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
 
 const getPaymentBizEvent = (
@@ -109,7 +109,7 @@ const getPaymentBizEvent = (
   ],
 });
 
-const generatePayeeFiscalCode = () => {
+export const generatePayeeFiscalCode = () => {
   return randomString(11, "0123456789") as OrganizationFiscalCode;
 };
 
@@ -130,13 +130,13 @@ const generateContentType = () => {
       return "GENERIC";
   }
 };
-export const generateMessage = () => {
+
+export const generateAvroMessage = () => {
   const contentType = generateContentType();
 
   if (contentType === "PAYMENT") {
     return {
-      id: generateMessageId(),
-      operation: "CREATE",
+      id: generateAvroMessageId(),
       senderServiceId: "Reminder",
       senderUserId: "Reminder",
       timeToLiveSeconds: 100,
@@ -148,22 +148,42 @@ export const generateMessage = () => {
       content_paymentData_invalidAfterDueDate: false,
       content_paymentData_payeeFiscalCode: generatePayeeFiscalCode(),
       content_paymentData_dueDate: "2999-06-10",
-      fiscal_code: generateFakeFiscalCode("9"),
+      fiscalCode: generateFakeFiscalCode("9"),
     };
   } else {
     return {
-      id: generateMessageId(),
-      operation: "CREATE",
+      id: generateAvroMessageId(),
       senderServiceId: "Reminder",
       senderUserId: "Reminder",
       timeToLiveSeconds: 100,
       isPending: false,
       content_subject: "subject",
       content_type: contentType,
-      fiscal_code: generateFakeFiscalCode("9"),
+      fiscalCode: generateFakeFiscalCode("9"),
     };
   }
 };
+
+export const testFiscalCodeGenerator = (
+  testFiscalCodes: ReadonlyArray<FiscalCode>
+) => () => testFiscalCodes[Math.floor(Math.random() * testFiscalCodes.length)];
+
+export const generatePaymentMessage = (
+  fiscalCodeGenerator: () => FiscalCode
+) => ({
+  content: {
+    markdown: "A Payment updater markdown".repeat(5),
+    subject: "A Payment updater subject",
+    payment_data: {
+      notice_number: generateNoticeNumber(),
+      amount: 10,
+      payee: {
+        fiscal_code: generatePayeeFiscalCode(),
+      },
+    },
+  },
+  fiscal_code: fiscalCodeGenerator(),
+});
 
 export const generateRandomPayment = () => {
   const payeeFiscalCode = generatePayeeFiscalCode();
