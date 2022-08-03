@@ -19,7 +19,7 @@ export const PaymentMessage = t.interface({
   content_paymentData_invalidAfterDueDate: t.boolean,
   content_paymentData_payeeFiscalCode: OrganizationFiscalCode,
   content_paymentData_dueDate: t.string,
-  fiscal_code: FiscalCode,
+  fiscalCode: FiscalCode,
 });
 
 export type PaymentMessage = t.TypeOf<typeof PaymentMessage>;
@@ -148,7 +148,7 @@ export const generateAvroMessage = () => {
       content_paymentData_invalidAfterDueDate: false,
       content_paymentData_payeeFiscalCode: generatePayeeFiscalCode(),
       content_paymentData_dueDate: "2999-06-10",
-      fiscal_code: generateFakeFiscalCode("9"),
+      fiscalCode: generateFakeFiscalCode("9"),
     };
   } else {
     return {
@@ -159,7 +159,7 @@ export const generateAvroMessage = () => {
       isPending: false,
       content_subject: "subject",
       content_type: contentType,
-      fiscal_code: generateFakeFiscalCode("9"),
+      fiscalCode: generateFakeFiscalCode("9"),
     };
   }
 };

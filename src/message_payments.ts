@@ -68,7 +68,7 @@ export default function() {
     generatePayment(
       paymentMessage.content_paymentData_payeeFiscalCode,
       paymentMessage.content_paymentData_noticeNumber,
-      paymentMessage.fiscal_code
+      paymentMessage.fiscalCode
     )
   );
 
